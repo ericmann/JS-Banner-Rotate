@@ -60,10 +60,6 @@
 	position:absolute;
 }
 
-img {
-	display:block;
-}
-
 .banner-container ul.banner-links {
 	bottom:1px;
 	margin-bottom:0 !important;
@@ -89,12 +85,6 @@ img {
 	color:#FFFFFF;
 }
 
-body img {
+#jsBanners img {
 	max-width:99.9%;
 }
-
-img {
-	border:0 none;
-}
-
-/* Other Stuff */

@@ -3,7 +3,7 @@
 Plugin Name: JS Banner Rotate
 Plugin URI: http://www.jumping-duck.com/wordpress/
 Description: Create a javascript-driven rotating banner image on your WordPress site.
-Version: 1.0.1
+Version: 1.0.2
 Author: Eric Mann
 Author URI: http://www.eamann.com
 */
@@ -57,7 +57,7 @@ function jsb_add_javascript() {
 	/* The following code block will call all of our javascript libraries and set things up for the banner rotation */
 ?> 
 <script type="text/javascript" src="<?php echo JSB_SCRIPTS; ?>/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="<?php echo JSB_SCRIPTS; ?>/selector-beta-min.js"></script>
+<script type="text/javascript" src="<?php echo JSB_SCRIPTS; ?>/selector-min.js"></script>
 <script type="text/javascript" src="<?php echo JSB_SCRIPTS; ?>/animation-min.js"></script>
 <script type="text/javascript" src="<?php echo JSB_SCRIPTS; ?>/js-class-min.js"></script> 
 <script type="text/javascript" src="<?php echo JSB_SCRIPTS; ?>/core-min.js"></script>
@@ -66,10 +66,10 @@ function jsb_add_javascript() {
 // <![CDATA[
 
 	(function() {
-		var banner  = Ojay('#homeBanners'),
+		var banner  = Ojay('#jsBanners'),
 			banners = banner.descendants('.banner').setStyle({opacity: 0}).hide(),
 			current = banners.at(0).setStyle({opacity: 1}).show(),
-			bannerHolder = Ojay('#homeBanners')
+			bannerHolder = Ojay('#jsBanners')
 						.setStyle({background: '#000000'});
                 
 		var numbers = Ojay(Ojay.HTML.ul({className: 'banner-links'}, function(h) {
@@ -129,71 +129,18 @@ Ojay('#banner-block').on('click', Ojay.delegateEvent({
 
 function jsb_add_css() {
 ?>
-<!--style>
-.banner-container {
-	margin-botton:20px;
-	position:relative;
-	clear:both;
-}
-
-.banner-top-links {
-	height: 33px;
-	left:50%;
-	margin-left:-50px;
-	margin-top:-1px;
-	position:absolute;
-	top:0px;
-	width:100px;
-	z-index:1000;
-}
-
-.banner-top-links ul {
-	margin: 0 10px;
-}
-
-.banner-top-links ul li.images-link {
-	float:left;
-	height:23px;
-	list-style-type:none;
-	margin-bottom:0;
-}
-
-.banner-top-links ul li a {
-	display: block;
-	height: 23px;
-	position: relative;
-	text-indent:-9999px;
-	z-index:100px;
-}
-
-.home-banner {
-	height: <?php echo JSB_HEIGHT; ?> px;
-	width: <?php echo JSB_WIDTH; ?> px;
-	overflow: hidden;
-	position:relative;
-}
-
-.banner {
-	opacity: 0;
-	position:absolute;
-}
-
-img {
-	display:block;
-}
-</style-->
 <link media="screen" type="text/css" href="<?php echo JSB_DIRECTORY; ?>/jsbrotate.css" media="screen" rel="stylesheet" />
-<style>
-#banner-block, .home-banner {
+<style type="text/css">
+#banner-block, #jsBanners .home-banner {
 	height: <?php echo JSB_HEIGHT; ?>px;
 	width: <?php echo JSB_WIDTH; ?>px;
 }
-.banner-top-links .image-frame {
+#banner-block .banner-top-links .image-frame {
 	background:transparent url(<?php echo JSB_DIRECTORY; ?>/images/banner-top-links.png) no-repeat scroll 0 0;
 	height:100%;
 	width:100%;
 }
-.banner-container ul.banner-links {
+#banner-block .banner-container ul.banner-links {
 	background:transparent url(<?php echo JSB_DIRECTORY; ?>/images/banner-links.png) repeat-x scroll right top;
 }
 </style>
@@ -224,7 +171,7 @@ function jsb_shortcode($atts) {
 				</ul> 
 			</div><!--/image-frame-->
 		</div><!--/banner-top-links-->
-		<div id="homeBanners" class="home-banner" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;background:url('<?php echo $atts['image1']; ?>') no-repeat;">	
+		<div id="jsBanners" class="home-banner" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;background:url('<?php echo $atts['image1']; ?>') no-repeat;">	
 			<span class="banner"><img src="<?php echo $atts['image1']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 1" /></span>
 			<?php if( $atts['image2'] != 'none' ) { ?>
 			<span class="banner"><img src="<?php echo $atts['image2']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 2" /></span>

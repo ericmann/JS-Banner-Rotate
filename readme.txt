@@ -3,8 +3,8 @@ Contributors: ericmann
 Donate link: http://www.jumping-duck.com/wordpress/
 Tags: javascript, banner, header, image rotate
 Requires at least: 2.7
-Tested up to: 2.8
-Stable tag: 1.0.1
+Tested up to: 2.8.1
+Stable tag: 1.0.2
 
 Create a javascript-driven rotating banner image on your WordPress site.
 
@@ -22,7 +22,19 @@ e.g.
 
 1. Upload the entire `js-banner-rotate` folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `[jsbrotate image1=... image2=... /]` in your templates/pages/posts (See the FAQs for additional options)
+1. Place `[jsbrotate image1=... image2=... /]` on your pages/posts
+
+= Accepted Arguments =
+
+The shortcode accepts several parameters:
+
+* Up to 5 numbered image URLs: [jsbrotate image1=http://blog.url/image1.jpg image2=http://blog.url/image2.jpg /]
+* Section heading: [jsbrotate title=home /]
+* Image height and width: [jsbrotate height=200 width=900 /]
+
+The default height is 300px and the default width is 900px.  You must override these in the shortcode if you want to specify different values.
+
+You cannot remove the title from the display - the title defaults to "Home."
 
 == Frequently Asked Questions ==
 
@@ -42,7 +54,25 @@ You can set several things via the shortcode:
 * Section Heading (title=Home)
 * Image Height and Width (height=200 width=900)
 
+= What are the shortcode parameter defaults? =
+
+* title=Home
+* height=300
+* width=900
+
+== Screenshots ==
+
+1. Shortcode entered in the *HTML* view edit post screen.
+2. The actual output of the banner on your blog.
+
+
 == Changelog ==
+
+= 1.0.2 =
+* Cleans up CSS to prevent interference with other plug-ins
+* Updates readme.txt to explain required/optional shortcode parameters and defaults
+* Updates YUI javascript libraries to the most current release
+* Tests compatability with WP 2.8.1
 
 = 1.0.1 =
 * First release
