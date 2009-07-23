@@ -78,7 +78,7 @@ Not yet.  That control will be coming in version 1.1.
 
 == Changelog ==
 
-= 1.1.0 =
+= 1.0.3 =
 * Adds the ability to toggle the banner title on and off
 
 = 1.0.2 =
