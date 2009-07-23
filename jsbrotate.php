@@ -3,7 +3,7 @@
 Plugin Name: JS Banner Rotate
 Plugin URI: http://www.jumping-duck.com/wordpress/
 Description: Create a javascript-driven rotating banner image on your WordPress site.
-Version: 1.0.2
+Version: 1.0.3
 Author: Eric Mann
 Author URI: http://www.eamann.com
 */
@@ -153,6 +153,7 @@ function jsb_shortcode($atts) {
 				'width' => JSB_WIDTH,
 				'title' => JSB_TITLE,
 				'link' => JSB_LINK,
+				'titlevis' => 'true',
 				'image1' => 'none',
 				'image2' => 'none',
 				'image3' => 'none',
@@ -163,7 +164,8 @@ function jsb_shortcode($atts) {
 	if( $atts['image1'] != 'none' ) {
 ?>
 <div id="banner-block" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;">
-	<div class="banner-container"> 
+	<div class="banner-container">
+	<?php if ($atts['titlevis'] == "true") { ?>
 		<div class="banner-top-links">
 			<div class="image-frame"> 
 				<ul>			
@@ -171,6 +173,7 @@ function jsb_shortcode($atts) {
 				</ul> 
 			</div><!--/image-frame-->
 		</div><!--/banner-top-links-->
+	<?php } ?>
 		<div id="jsBanners" class="home-banner" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;background:url('<?php echo $atts['image1']; ?>') no-repeat;">	
 			<span class="banner"><img src="<?php echo $atts['image1']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 1" /></span>
 			<?php if( $atts['image2'] != 'none' ) { ?>

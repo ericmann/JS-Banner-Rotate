@@ -3,8 +3,8 @@ Contributors: ericmann
 Donate link: http://www.jumping-duck.com/wordpress/
 Tags: javascript, banner, header, image rotate
 Requires at least: 2.7
-Tested up to: 2.8.1
-Stable tag: 1.0.2
+Tested up to: 2.8.2
+Stable tag: 1.0.3
 
 Create a javascript-driven rotating banner image on your WordPress site.
 
@@ -51,14 +51,24 @@ No.  All of your rotating images need to be the same size.
 You can set several things via the shortcode:
 
 * Image URLs (image1=http://blog.url/image.jpg image2=http://blog.url/image2.jpg)
+* Toggle the section heading (titlevis=true or titlevis=false)
 * Section Heading (title=Home)
 * Image Height and Width (height=200 width=900)
 
 = What are the shortcode parameter defaults? =
 
 * title=Home
+* titlevis=true
 * height=300
 * width=900
+
+= I want to get rid of the title on the banner, how do I do that? =
+
+The banner is turned on by default.  To disable the banner, place "titlevis=false" in the shortcode.  It will cleanly remove the label.
+
+= Can I change the colors and other styles of the display? =
+
+Not yet.  That control will be coming in version 1.1.
 
 == Screenshots ==
 
@@ -67,6 +77,9 @@ You can set several things via the shortcode:
 
 
 == Changelog ==
+
+= 1.1.0 =
+* Adds the ability to toggle the banner title on and off
 
 = 1.0.2 =
 * Cleans up CSS to prevent interference with other plug-ins
