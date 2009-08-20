@@ -49,8 +49,6 @@
 }
 
 .home-banner {
-/*	height: <?php echo get_option('jsb_height'); ?> px;
-	width: <?php echo get_option('jsb_width'); ?> px;*/
 	overflow: hidden;
 	position:relative;
 }
