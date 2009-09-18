@@ -55,6 +55,7 @@
 
 .banner {
 	opacity: 0;
+	filter:alpha(opacity=0);
 	position:absolute;
 }
 
@@ -85,4 +86,6 @@
 
 #jsBanners img {
 	max-width:99.9%;
+	width:auto !important;
+	width:99.9%;
 }

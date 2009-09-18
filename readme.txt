@@ -4,7 +4,7 @@ Donate link: http://www.jumping-duck.com/wordpress/
 Tags: javascript, banner, header, image rotate
 Requires at least: 2.7
 Tested up to: 2.8.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 
 Create a javascript-driven rotating banner image on your WordPress site.
 
@@ -101,6 +101,9 @@ Check to make sure you have the wp_head() template tag in your header and the wp
 
 
 == Changelog ==
+
+= 1.1.1 =
+* Fixes IE CSS display problem
 
 = 1.1 =
 * Further clean-ups to Javascript implementation
