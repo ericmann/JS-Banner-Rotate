@@ -8,6 +8,7 @@
 	margin-botton:20px;
 	position:relative;
 	clear:both;
+	width:100%;
 }
 
 .banner-top-links {
@@ -33,6 +34,7 @@
 	margin-bottom:0;
 	width:100%;
 	text-align:center;
+	color:#fff;
 }
 
 .banner-top-links ul li a {
@@ -88,4 +90,8 @@
 	max-width:99.9%;
 	width:auto !important;
 	width:99.9%;
+}
+#banner-block .banner-top-links .image-frame {
+	height:100%;
+	width:100%;
 }

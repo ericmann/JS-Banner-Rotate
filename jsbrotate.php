@@ -3,7 +3,7 @@
 Plugin Name: JS Banner Rotate
 Plugin URI: http://www.jumping-duck.com/wordpress/
 Description: Create a javascript-driven rotating banner image on your WordPress site.
-Version: 1.1.1
+Version: 1.2.0
 Author: Eric Mann
 Author URI: http://www.eamann.com
 */
@@ -26,9 +26,8 @@ Author URI: http://www.eamann.com
 */
 
 /*
-	This plugin uses Javascript libraries originally developed by Yahoo and The Other Media.
+	This plugin uses Javascript libraries originally developed by Yahoo.
 	Please refer to http://developer.yahoo.com/yui/ for more information on the YUI.
-	Please refer to http://ojay.othermedia.org/ for more information on Ojay.
 */
 
 /* Define plugin variables */
@@ -42,6 +41,8 @@ if( ! defined( 'JSB_HEIGHT' ))
 	define( 'JSB_HEIGHT', get_option('large_size_h') );
 if( ! defined( 'JSB_TITLE' ))
 	define( 'JSB_TITLE', 'Home' );
+if( ! defined( 'JSB_LINK' ))
+	define( 'JSB_LINK', get_bloginfo("url") );
 
 /* Check the installation */
 jsb_install();
@@ -57,10 +58,6 @@ function jsb_add_head() {
 	wp_enqueue_script('animation-min', JSB_SCRIPTS . '/animation-min.js', 'yahoo-dom-event', '2.7.0');
 	wp_enqueue_script('selector', JSB_SCRIPTS . '/selector-min.js', 'yahoo-dom-event', '2.7.0');
 
-	//Ojay Scripts
-	wp_enqueue_script('js-class-min', JSB_SCRIPTS . '/js-class-min.js', '', '0.4.1');
-	wp_enqueue_script('core-min', JSB_SCRIPTS . '/core-min.js', array('yahoo-dom-event', 'animation-min', 'selector', 'js-class-min'), '0.4.1');
-
 	//Stylesheet	
 	wp_enqueue_style('jsb-rotate', JSB_DIRECTORY . '/jsbrotate.css', '', '1.1', 'screen');
 }
@@ -72,75 +69,45 @@ global $jsbrotate;
 	?> 
 
 <script type="text/javascript">
-// <![CDATA[
+window.onload = jsbinit;
 
-	(function() {
-		var banner  = Ojay('#jsBanners'),
-			banners = banner.descendants('.banner').setStyle({opacity: 0}).hide(),
-			current = banners.at(0).setStyle({opacity: 1}).show(),
-			bannerHolder = Ojay('#jsBanners')
-						.setStyle({background: '#000000'});
-                
-		var numbers = Ojay(Ojay.HTML.ul({className: 'banner-links'}, function(h) {
-			banners.length.times(function(i) {
-                        var link = Ojay(h.li(String(i+1)));
-                        link.on('click', function() {
-                            time = Number(new Date);
-                            timeout = 2 * TIMEOUT;
-                            numbers.children()
-                                      .removeClass('current')
-                                      .at(i).addClass('current');
-                            update(i);
-                        });
-                    });
-                }));
-				<?php if($jsbrotate['numvis']=="true") { ?>
-					banner.insert(numbers, 'after');
-				<?php } ?>
-				
-                var index = 0, update = function(idx) {
-                    current.animate({opacity: {to: 0}, zIndex: {to: 0}}, <?php echo $jsbrotate['imgfade']; ?>).hide();
-                    current = banners.at(idx);
-					index = idx;
-                    current.show().animate({opacity: {to: 1}, zIndex: {to: 4}}, <?php echo $jsbrotate['imgfade']; ?>);
-                    numbers.children().wait(2)
-                                      .removeClass('current')
-					                  .at(index).addClass('current');
-                };
-				numbers.children().at(index).addClass('current');
-                
-                var time = Number(new Date), TIMEOUT = <?php echo 1000 * $jsbrotate['imgdisp']; ?>, timeout = TIMEOUT;
-                setInterval(function() {
-                    if (Number(new Date) - time < timeout) return;
-                    time = Number(new Date);
-                    timeout = TIMEOUT;
-                    if (++index == banners.length) index = 0;
-                    update(index);
-                }, timeout / 2);
-        	})();
-    	
-// ]]>
+function jsbinit() {
+	var allBanners = document.getElementById("jsBanners").getElementsByTagName("span");
+	var totalBanners = allBanners.length;
+	var lastBanner = totalBanners - 1;
+	show = new Array();
+	hide = new Array();
+	for(var i = 0; i < allBanners.length; i++) {
+		show[i] = new YAHOO.util.Anim(allBanners[i], {opacity:{to:1}},<?php echo $jsbrotate['imgfade']; ?>);
+		hide[i] = new YAHOO.util.Anim(allBanners[i], {opacity:{to:0}},<?php echo $jsbrotate['imgfade']; ?>);
+	}
+	var k = 0;
+	for(var j=0; j < allBanners.length - 1; j++) {
+		createListener(j);							
+	}
+	show[lastBanner].onComplete.subscribe(function() {createNext(lastBanner, true);});
+	
+	show[0].animate();
+}
+function createNext(id, last) {
+	if(last==false) {
+		setTimeout(function() {
+			hide[id].animate();
+			show[(id+1)].animate();
+			}, <?php echo ($jsbrotate['imgdisp'] * 1000); ?>);
+	} else {
+		setTimeout(function() {
+			hide[id].animate();
+			show[0].animate();
+			}, <?php echo ($jsbrotate['imgdisp'] * 1000); ?>);
+	}
+}
+
+function createListener(id) {
+	show[id].onComplete.subscribe(function() {createNext(id, false);});
+}
 </script> 
 	<?php
-}
-
-function jsb_add_css() {
-?>
-<style type="text/css">
-#banner-block, #jsBanners .home-banner {
-	height: <?php echo JSB_HEIGHT; ?>px;
-	width: <?php echo JSB_WIDTH; ?>px;
-}
-#banner-block .banner-top-links .image-frame {
-	background:transparent url(<?php echo JSB_DIRECTORY; ?>/images/banner-top-links.png) no-repeat scroll 0 0;
-	height:100%;
-	width:100%;
-}
-#banner-block .banner-container ul.banner-links {
-	background:transparent url(<?php echo JSB_DIRECTORY; ?>/images/banner-links.png) repeat-x scroll right top;
-}
-</style>
-<?php
 }
 
 function jsb_shortcode($atts) {
@@ -149,67 +116,29 @@ function jsb_shortcode($atts) {
 				'width' => JSB_WIDTH,
 				'title' => JSB_TITLE,
 				'link' => JSB_LINK,
-				'titlevis' => 'true',
+				'titlevis' => 'false',
+				'images' => 'none',
 				'image1' => 'none',
 				'image2' => 'none',
 				'image3' => 'none',
 				'image4' => 'none',
 				'image5' => 'none',
-				'numvis' => 'true',
 				'imgdisp' => '8',
 				'imgfade' => '4',
-				'color' => '#ab106c'
+				'color' => '#ab106c'				
 				), $atts);
 
 	global $jsbrotate;
-	$jsbrotate['numvis']=$atts['numvis'];
 	$jsbrotate['imgdisp']=$atts['imgdisp'];
 	$jsbrotate['imgfade']=$atts['imgfade'];
+	$jsbrotate['url']=$atts['link'];
+	
+	if( $atts['image1'] != 'none' )
+		jsb_canonical($atts);
+		
+	if( $atts['images'] != 'none' )
+		jsb_unlimited($atts);
 
-	if( $atts['image1'] != 'none' ) {
-	if( $atts['color'] != '#ab106c') {
-?>
-	<style type="text/css">
-	.banner-container ul.banner-links li{
-		color: <?php echo $atts['color']; ?>;
-	}
-	.banner-container ul.banner-links li.current {
-		background:<?php echo $atts['color']; ?> none repeat scroll 0 0;
-	}
-	</style>
-<?php } ?>
-<div id="banner-block" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;">
-	<div class="banner-container">
-	<?php if ($atts['titlevis'] == "true") { ?>
-		<div class="banner-top-links">
-			<div class="image-frame"> 
-				<ul>			
-					<li class="images-link"><a href="<?php echo $atts['link']; ?>"><?php echo $atts['title']; ?></a></li> 
-				</ul> 
-			</div><!--/image-frame-->
-		</div><!--/banner-top-links-->
-	<?php } ?>
-		<div id="jsBanners" class="home-banner" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;background:url('<?php echo $atts['image1']; ?>') no-repeat;">	
-			<span class="banner"><img src="<?php echo $atts['image1']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 1" /></span>
-			<?php if( $atts['image2'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image2']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 2" /></span>
-			<?php if( $atts['image3'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image3']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 3" /></span>
-			<?php if( $atts['image4'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image4']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 4" /></span>
-			<?php if( $atts['image5'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image5']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 5" /></span>
-			<?php
-			} // Close image5 conditional
-			} // Close image4 conditional
-			} // Close image3 conditional
-			} // Close image2 conditional
-			?>
-		</div><!--/homeBanners-->
-	</div><!--/banner-container-->
-</div><!--/banner-block-->
-<?php
-	} // Close image1 conditional
 	add_action('wp_footer', 'jsb_add_foot');
 }
 
@@ -221,12 +150,10 @@ function jsbrotate($options) {
 		$atts['height'] = JSB_HEIGHT;
 	if($atts['width'] == '')
 		$atts['width'] = JSB_WIDTH;
-	if($atts['title'] == '')
-		$atts['title'] = JSB_TITLE;
 	if($atts['link'] == '')
 		$atts['link'] = JSB_LINK;
-	if($atts['titlevis'] == '')
-		$atts['titlevis'] = 'true';
+	if($atts['images'] == '')
+		$atts['images'] = 'none';
 	if($atts['image1'] == '')
 		$atts['image1'] = 'none';
 	if($atts['image2'] == '')
@@ -243,60 +170,84 @@ function jsbrotate($options) {
 		$atts['imgdisp'] = '8';
 	if($atts['imgfade'] == '')
 		$atts['imgfade'] = '4';
-	if($atts['color'] == '')
-		$atts['color'] = '#ab106c';
-	$jsbrotate['numvis']=$atts['numvis'];
 	$jsbrotate['imgdisp']=$atts['imgdisp'];
 	$jsbrotate['imgfade']=$atts['imgfade'];
 
-	if( $atts['image1'] != 'none' ) {
-	if( $atts['color'] != '#ab106c') {
+	if( $atts['image1'] != 'none' )
+		jsb_canonical($atts);
+
+	if( $atts['images'] != 'none' )
+		jsb_unlimited($atts);
+
+	add_action('wp_footer', 'jsb_add_foot');
+}
+
+function jsb_canonical($atts) {
 ?>
-	<style type="text/css">
-	.banner-container ul.banner-links li{
-		color: <?php echo $atts['color']; ?>;
-	}
-	.banner-container ul.banner-links li.current {
-		background:<?php echo $atts['color']; ?> none repeat scroll 0 0;
-	}
-	</style>
-<?php } ?>
-<div id="banner-block" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;">
+
+<div id="banner-block" style="max-height:<?php echo $atts['height']; ?>px;height:auto !important; height:<?php echo $atts['height']; ?>px;max-width:<?php echo $atts['width']; ?>px;width:auto !important;width:<?php echo $atts['width']; ?>px;">
 	<div class="banner-container">
 	<?php if ($atts['titlevis'] == "true") { ?>
 		<div class="banner-top-links">
-			<div class="image-frame"> 
+			<div class="image-frame" style="background:transparent url(<?php echo JSB_DIRECTORY; ?>/images/banner-top-links.png) no-repeat scroll 0 0;"> 
 				<ul>			
-					<li class="images-link"><a href="<?php echo $atts['link']; ?>"><?php echo $atts['title']; ?></a></li> 
+					<li class="images-link"><?php echo $atts['title']; ?></li> 
 				</ul> 
 			</div><!--/image-frame-->
 		</div><!--/banner-top-links-->
 	<?php } ?>
+
 		<div id="jsBanners" class="home-banner" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;background:url('<?php echo $atts['image1']; ?>') no-repeat;">	
-			<span class="banner"><img src="<?php echo $atts['image1']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 1" /></span>
+			<span style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><img src="<?php echo $atts['image1']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 1" /></span>
 			<?php if( $atts['image2'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image2']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 2" /></span>
+			<span style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><img src="<?php echo $atts['image2']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 2" /></span>
 			<?php if( $atts['image3'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image3']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 3" /></span>
+			<span style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><img src="<?php echo $atts['image3']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 3" /></span>
 			<?php if( $atts['image4'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image4']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 4" /></span>
+			<span style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><img src="<?php echo $atts['image4']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 4" /></span>
 			<?php if( $atts['image5'] != 'none' ) { ?>
-			<span class="banner"><img src="<?php echo $atts['image5']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 5" /></span>
+			<span style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><img src="<?php echo $atts['image5']; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image 5" /></span>
 			<?php
 			} // Close image5 conditional
 			} // Close image4 conditional
 			} // Close image3 conditional
 			} // Close image2 conditional
 			?>
-		</div><!--/homeBanners-->
+		</div><!--/jsBanners-->
 	</div><!--/banner-container-->
 </div><!--/banner-block-->
 <?php
-	} // Close image1 conditional
-	add_action('wp_footer', 'jsb_add_foot');
 }
 
-add_action('wp_head', 'jsb_add_css');
+function jsb_unlimited($atts) {
+	$allbanners = explode("|", $atts['images']);
+	$i = 0;
+?>
+<a href="<?php echo $atts['link']; ?>">
+<div id="banner-block" style="max-height:<?php echo $atts['height']; ?>px;height:auto !important; height:<?php echo $atts['height']; ?>px;max-width:<?php echo $atts['width']; ?>px;width:auto !important;width:<?php echo $atts['width']; ?>px;">
+	<div class="banner-container">
+	<?php if ($atts['titlevis'] == "true") { ?>
+		<div class="banner-top-links">
+			<div class="image-frame" style="background:transparent url(<?php echo JSB_DIRECTORY; ?>/images/banner-top-links.png) no-repeat scroll 0 0;"> 
+				<ul>			
+					<li class="images-link"><?php echo $atts['title']; ?></li> 
+				</ul> 
+			</div><!--/image-frame-->
+		</div><!--/banner-top-links-->
+	<?php } ?>
+
+		<div id="jsBanners" class="home-banner" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;background:url('<?php echo $allbanners[0]; ?>') no-repeat;">	
+<?php foreach($allbanners as $banner) { 
+			$i++; ?>		
+			<span id="banner-<?php echo $i; ?>" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><img src="<?php echo $banner; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image <?php echo $i; ?>" /></span>
+<?php } ?>			
+		</div><!--/jsBanners-->
+	</div><!--/banner-container-->
+</div><!--/banner-block-->
+</a>
+<?php
+}
+
 add_action('init', 'jsb_add_head');
 add_shortcode('jsbrotate', 'jsb_shortcode');
 ?>
