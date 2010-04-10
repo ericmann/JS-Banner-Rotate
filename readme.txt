@@ -3,8 +3,8 @@ Contributors: ericmann
 Donate link: http://www.jumping-duck.com/wordpress/
 Tags: javascript, banner, header, image rotate
 Requires at least: 2.7
-Tested up to: 2.9.1
-Stable tag: 1.2.1
+Tested up to: 2.9.2
+Stable tag: 1.2.2
 
 Create a javascript-driven rotating banner image on your WordPress site.
 
@@ -29,7 +29,7 @@ e.g.
 
 The shortcode/template tag accepts several parameters:
 
-* As many image URLs as you want: [jsbrotate images=*http://blog.url/image1.jpg*|*http://blog.url/image2.jpg* /]
+* As many image URLs as you want: [jsbrotate images=http://blog.url/image1.jpg|http://blog.url/image2.jpg /]
 * Slideshow link: [jsbrotate link=http://whateveryouwant.com /]
 * Image height and width: [jsbrotate height=200 width=900 /]
 * Image display and fade time: [jsbrotate imgdisp=8 imgfade=4 /]
@@ -39,6 +39,10 @@ The default height and width is whatever is set for "large" images in the WordPr
 You can toggle the title display - the title defaults to "Home."
 
 == Frequently Asked Questions ==
+
+= How do I pass multiple parameters in the jsbrotate() function? =
+
+To pass multiple parameters (height, fadetime, images, etc), separate them with & characters like this: `<?php jsbrotate('images=http://blog.url/image2.jpg|http://blog.url/image2.jpg&height=200&width=900'); ?>`
 
 = How many images can I rotate? =
 
@@ -100,6 +104,10 @@ Check to make sure you have the `wp_head()` template tag in your header and the 
 
 
 == Changelog ==
+
+= 1.2.2 =
+* Fixed CSS typo for .banner-container definition
+* Updated documentation for PHP function call
 
 = 1.2.1 =
 * Tested to WordPress version 2.9.1
