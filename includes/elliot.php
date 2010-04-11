@@ -30,7 +30,7 @@
   * along with this program; if not, write to the Free Software
   * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   */
-include(ABSPATH . WPINC . '/class-IXR.php');
+include_once(ABSPATH . WPINC . '/class-IXR.php');
 
 if(!class_exists('ElliotClient')) :
 class ElliotClient {
