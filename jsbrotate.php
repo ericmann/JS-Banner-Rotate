@@ -3,7 +3,7 @@
 Plugin Name: JS Banner Rotate
 Plugin URI: http://www.jumping-duck.com/wordpress/
 Description: Create a JavaScript-driven rotating banner image on your WordPress site.
-Version: 1.3.0
+Version: 1.3.1
 Author: Eric Mann
 Author URI: http://www.eamann.com
  */
@@ -30,9 +30,10 @@ Author URI: http://www.eamann.com
  */
 
 /* Define plugin variables */
-global $reporter;
+global $jsb_reporter;
+$jsb_reporter = NULL;
 if( ! defined( 'JSB_VER' ))
-	define( 'JSB_VER', '1.3.0' );
+	define( 'JSB_VER', '1.3.1' );
 if( ! defined( 'JSB_BASE' ))
 	define( 'JSB_BASE' , dirname(__FILE__) );
 if( ! defined( 'JSB_DIRECTORY' ))
@@ -44,7 +45,7 @@ if( ! defined( 'JSB_BASE_INC' ))
 	
 /* Activate error reporter */
 include_once ( JSB_BASE_INC . '/elliot.php' );
-$reporter = new ElliotClient('http://jumping-duck.com/xmlrpc.php', 'JS Banner Rotate', JSB_VER);
+if(class_exists('JSBElliotClient')) $jsb_reporter = new JSBElliotClient('http://jumping-duck.com/xmlrpc.php', 'JS Banner Rotate', JSB_VER);
 
 /* Check to see if this is a new installation or an upgrade */
 $current_ver = get_option('jsb_version');
@@ -54,8 +55,8 @@ if( $current_ver && version_compare($current_ver, JSB_VER, '<')) {
 } elseif(!$current_ver) {
 	$msg = 'New installation.';
 }
-update_option('jsb_version', '1.3.0');
-if(!$msg=='') $reporter->dispatch($msg);
+update_option('jsb_version', JSB_VER);
+if(!$jsb_reporter==NULL && $msg!='') $jsb_reporter->dispatch($msg);
 
 /*
  * Sets admin warnings regarding required PHP and WordPress versions.
@@ -76,7 +77,7 @@ function _jsb_wp_warning() {
 
 // Check required WordPress version.
 if ( version_compare(get_bloginfo('version'), '2.8', '<')) {
-	$reported = $reporter->dispatch('Incompatible WordPress Version');
+	if(!$jsb_reporter==NULL) $reported = $reporter->dispatch('Incompatible WordPress Version');
 	add_action('admin_notices', '_jsb_wp_warning');
 } else {
 	include_once ( JSB_BASE_INC . '/core.php' );

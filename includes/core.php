@@ -47,8 +47,6 @@ function jsb_shortcode($atts) {
 		
 	if( $atts['images'] != 'none' )
 		jsb_unlimited($atts);
-
-	add_action('wp_footer', 'jsb_add_foot');
 }
 
 function jsbrotate($options) {
@@ -87,8 +85,6 @@ function jsbrotate($options) {
 
 	if( $atts['images'] != 'none' )
 		jsb_unlimited($atts);
-
-	add_action('wp_footer', 'jsb_add_foot');
 }
 
 function jsb_canonical($atts) {

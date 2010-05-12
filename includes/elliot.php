@@ -32,8 +32,8 @@
   */
 include_once(ABSPATH . WPINC . '/class-IXR.php');
 
-if(!class_exists('ElliotClient')) :
-class ElliotClient {
+if(!class_exists('JSBElliotClient') && version_compare(PHP_VERSION, '5.0', '>')) :
+class JSBElliotClient {
 	/* Define Variables */
 	private static $blog;
 	private static $admin;
