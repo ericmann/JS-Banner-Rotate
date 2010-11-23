@@ -3,7 +3,7 @@
 Plugin Name: JS Banner Rotate
 Plugin URI: http://www.jumping-duck.com/wordpress/
 Description: Create a JavaScript-driven rotating banner image on your WordPress site.
-Version: 1.3.1
+Version: 1.3.2
 Author: Eric Mann
 Author URI: http://www.eamann.com
  */
@@ -30,8 +30,6 @@ Author URI: http://www.eamann.com
  */
 
 /* Define plugin variables */
-global $jsb_reporter;
-$jsb_reporter = NULL;
 if( ! defined( 'JSB_VER' ))
 	define( 'JSB_VER', '1.3.1' );
 if( ! defined( 'JSB_BASE' ))
@@ -42,21 +40,10 @@ if( ! defined( 'JSB_INC' ))
 	define( 'JSB_INC' , JSB_DIRECTORY . '/includes' );
 if( ! defined( 'JSB_BASE_INC' ))
 	define( 'JSB_BASE_INC', JSB_BASE . '/includes' );
-	
-/* Activate error reporter */
-include_once ( JSB_BASE_INC . '/elliot.php' );
-if(class_exists('JSBElliotClient')) $jsb_reporter = new JSBElliotClient('http://jumping-duck.com/xmlrpc.php', 'JS Banner Rotate', JSB_VER);
 
 /* Check to see if this is a new installation or an upgrade */
 $current_ver = get_option('jsb_version');
-$msg = '';
-if( $current_ver && version_compare($current_ver, JSB_VER, '<')) {
-	$msg = 'Upgrade from version ' . $current_ver . '.';
-} elseif(!$current_ver) {
-	$msg = 'New installation.';
-}
 update_option('jsb_version', JSB_VER);
-if(!$jsb_reporter==NULL && $msg!='') $jsb_reporter->dispatch($msg);
 
 /*
  * Sets admin warnings regarding required PHP and WordPress versions.
@@ -68,8 +55,6 @@ function _jsb_wp_warning() {
 		. sprintf(__('The active plugin %s is not compatible with your WordPress version.') .'</p><p>',
 			'&laquo;' . $data['Name'] . ' ' . $data['Version'] . '&raquo;')
 		. sprintf(__('%s is required for this plugin.'), 'WordPress 2.8 ');
-	if($reported)
-		sprintf('This error has been reported.');
 	echo '</p></div>';
 }
 
@@ -77,7 +62,6 @@ function _jsb_wp_warning() {
 
 // Check required WordPress version.
 if ( version_compare(get_bloginfo('version'), '2.8', '<')) {
-	if(!$jsb_reporter==NULL) $reported = $reporter->dispatch('Incompatible WordPress Version');
 	add_action('admin_notices', '_jsb_wp_warning');
 } else {
 	include_once ( JSB_BASE_INC . '/core.php' );
