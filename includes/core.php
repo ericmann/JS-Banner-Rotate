@@ -128,7 +128,6 @@ function jsb_unlimited($atts) {
 	$allbanners = explode("|", $atts['images']);
 	$i = 0;
 ?>
-<a href="<?php echo $atts['link']; ?>">
 <div id="banner-block" style="max-height:<?php echo $atts['height']; ?>px;height:auto !important; height:<?php echo $atts['height']; ?>px;max-width:<?php echo $atts['width']; ?>px;width:auto !important;width:<?php echo $atts['width']; ?>px;">
 	<div class="banner-container">
 	<?php if ($atts['titlevis'] == "true") { ?>
@@ -144,12 +143,11 @@ function jsb_unlimited($atts) {
 		<div id="jsBanners" class="home-banner" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;background:url('<?php echo $allbanners[0]; ?>') no-repeat;">	
 <?php foreach($allbanners as $banner) { 
 			$i++; ?>		
-			<span id="banner-<?php echo $i; ?>" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><img src="<?php echo $banner; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image <?php echo $i; ?>" /></span>
+			<span id="banner-<?php echo $i; ?>" style="height:<?php echo $atts['height']; ?>px;width:<?php echo $atts['width']; ?>px;" class="banner"><a href="<?php echo $atts['link']; ?>"><img src="<?php echo $banner; ?>" width="<?php echo $atts['width']; ?>" height="<?php echo $atts['height']; ?>" alt="JSB Rotate Image <?php echo $i; ?>" /></a></span>
 <?php } ?>			
 		</div><!--/jsBanners-->
 	</div><!--/banner-container-->
 </div><!--/banner-block-->
-</a>
 <?php
 }
 
