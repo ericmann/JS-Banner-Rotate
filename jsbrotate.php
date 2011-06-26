@@ -52,4 +52,13 @@ if ( version_compare( PHP_VERSION, '5.0', '<' ) ) {
 } else {
 	require_once( 'lib/class.js-banner-rotate.php' );
 }
+
+function jsbrotate( $options ){
+	JS_Banner_Rotate::jsbrotate($options);
+}
+
+add_action( 'wp_enqueue_scripts',   array( 'JS_Banner_Rotate', 'enqueue_scripts' ) );
+add_action( 'wp_print_styles',      array( 'JS_Banner_Rotate', 'print_styles' ) );
+
+add_shortcode( 'jsbrotate',         array( 'JS_Banner_Rotate', 'shortcode_handler' ) );
 ?>
