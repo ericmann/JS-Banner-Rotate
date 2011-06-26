@@ -4,13 +4,13 @@ Donate link: http://www.jumping-duck.com/wordpress/
 Tags: javascript, banner, header, image rotate, yui
 Requires at least: 2.8
 Tested up to: 3.2
-Stable tag: 1.3.3
+Stable tag: 1.4
 
 Create a JavaScript-driven rotating banner image on your WordPress site.
 
 == Description ==
 
-This plugin uses the Yahoo! User Interface (YUI) Javascript libraries to create a platform-agnostic rotating banner image for your website.  Unlike similar Flash implementations, this feature will work even on Flash-disabled web browsers.  
+This plugin uses JavaScript to create a platform-agnostic rotating banner image for your website.  Unlike similar Flash implementations, this feature will work even on Flash-disabled web browsers.
 
 Note that you will need to upload your images separately using WordPress' built-in image gallery feature.  
 
@@ -105,6 +105,12 @@ Check to make sure you have the `wp_head()` template tag in your header and the 
 
 == Changelog ==
 
+= 1.4 =
+* Switch to jQuery (issue 1)
+* Fix white background image (issue 2)
+* Contextual script inclusion and execution (issue 3)
+* Upgrade to PHP5 OOP syntax
+
 = 1.3.3 =
 * Fix an exotic IE7 bug related to linking to images.
 
@@ -155,6 +161,9 @@ Check to make sure you have the `wp_head()` template tag in your header and the 
 * First release
 
 == Upgrade Notice ==
+
+= 1.4 =
+New versions require PHP5. If your system is not running PHP5, the plugin will not activate properly!
 
 = 1.3.1 =
 Fixes security vulnerability. Upgrade immediately.
