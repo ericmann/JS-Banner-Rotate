@@ -51,6 +51,7 @@ if ( version_compare( PHP_VERSION, '5.0', '<' ) ) {
 	add_action('admin_notices', '_jsb_php_warning');
 } else {
 	require_once( 'lib/class.js-banner-rotate.php' );
+	require_once( 'lib/class.jsb-banner.php' );
 }
 
 function jsbrotate( $options ){
