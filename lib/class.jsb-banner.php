@@ -145,7 +145,12 @@ class JSB_Banner {
 	 * @return string
 	 */
 	function body() {
+		$block = "";
+		$block .= '<div id="jsBanners" class="home-banner" style="height:' . $this->height . 'px;width:' . $this->width . 'px;">';
 
+		$block .= '</div><!-- /jsBanners -->';
+
+		return $block;
 	}
 
 	/**
