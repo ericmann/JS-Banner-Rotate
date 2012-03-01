@@ -6,13 +6,13 @@ Description: Create a JavaScript-driven rotating banner image on your WordPress 
 Version: 1.4
 Author: Eric Mann
 Author URI: http://www.eamann.com
-License: GPLv3+
+License: GPLv2+
  */
 
 /* Copyright 2009-11  Eric Mann, Jumping Duck Media
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 3 or, at
+ * it under the terms of the GNU General Public License, version 2 or, at
  * your discretion, any later version, as published by the Free
  * Software Foundation.
  *
