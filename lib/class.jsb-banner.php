@@ -12,7 +12,7 @@ class JSB_Banner {
 	 * @access private
 	 * @var array
 	 */
-	var $images;
+	var $images = array();
 
 	/**
 	 * Height of the banner block.
@@ -39,7 +39,7 @@ class JSB_Banner {
 	 * @access private
 	 * @var int
 	 */
-	var $imgdisp;
+	var $imgdisp = 8;
 
 	/**
 	 * Fade time between individual images.
@@ -48,7 +48,7 @@ class JSB_Banner {
 	 * @access private
 	 * @var int
 	 */
-	var $imgfade;
+	var $imgfade = 4;
 
 	/**
 	 * Option to display rotating slide numbers
@@ -57,7 +57,7 @@ class JSB_Banner {
 	 * @access private
 	 * @var bool
 	 */
-	var $numvis;
+	var $numvis = true;
 
 	/**
 	 * Option to display a title for the rotating banners
@@ -66,7 +66,7 @@ class JSB_Banner {
 	 * @access private
 	 * @var bool
 	 */
-	var $titlevis;
+	var $titlevis = true;
 
 	/**
 	 * Banner title
@@ -84,7 +84,7 @@ class JSB_Banner {
 	 * @param array $args     Arguments to control the banner
 	 * @return JSB_Banner
 	 */
-	public function JSB_Banner( $images, $args ) {
+	public function __construct( $images, $args ) {
 		$defaults = array(
 			'height'    => get_option( 'large_size_h' ),
 			'width'     => get_option( 'large_size_w' ),
@@ -97,7 +97,7 @@ class JSB_Banner {
 
 		$args = array_merge( $defaults, $args );
 
-		$this->images   = (array) $args['images'];
+		$this->images   = (array) $images;
 		$this->height   = (int) $args['height'];
 		$this->width    = (int) $args['width'];
 		$this->imgdisp  = (int) $args['imgdisp'];
@@ -112,69 +112,67 @@ class JSB_Banner {
 		}
 	}
 
-	/**
-	 * Create the banner block header.
-	 *
-	 * @since 1.4
-	 * @access private
-	 * @return string
-	 */
-	function header() {
-		$header = "";
+	private function height_and_width( $move_to_top = false, $extras = array() ) {
+		$styles = [];
 
-		$header .= '<div id="banner-block" style="max-height: ' . $this->height . 'px;height:auto !important;height: ' . $this->height .';width:auto !important;width:' . $this->width . 'px;">';
-		$header .= '<div class="banner-container">';
-		if($this->titlevis) {
-			$header .= '<div class="banner-top-links">';
-			$header .= '<div class="image-frame" style="background: transparent url(' . JSB_DIRECTORY . 'images/banner-top-links.png) no-repeat scroll 0 0;">';
-			$header .= '<ul>';
-			$header .= '<li class="images-link">' . $this->title . '</li>';
-			$header .= '</ul>';
-			$header .= '</div>';
-			$header .= '</div>';
+		$styles[] = "height:{$this->height}px";
+		$styles[] = "width:{$this->width}px";
+		$styles[] = "overflow:hidden";
+
+
+		if ( $move_to_top ) {
+			$styles[] = "position:relative";
+			$styles[] = "top:-{$this->height}px";
 		}
 
-		return $header;
-	}
+		$styles = array_merge( $styles, $extras );
 
-	/**
-	 * Loop through images and create a banner block
-	 *
-	 * @since 1.4
-	 * @access private
-	 * @return string
-	 */
-	function body() {
-		$block = "";
-		$block .= '<div id="jsBanners" class="home-banner" style="height:' . $this->height . 'px;width:' . $this->width . 'px;">';
+		$style_string = implode( ";", $styles );
 
-		$block .= '</div><!-- /jsBanners -->';
-
-		return $block;
-	}
-
-	/**
-	 * Close the banner block elements
-	 *
-	 * @since 1.4
-	 * @access private
-	 * @return string
-	 */
-	function footer(){
-		$footer = "";
-
-		$footer .= "</div><!-- /banner-container -->";
-		$footer .- "</div><!-- /banner-block -->";
-
-		return $footer;
+		return "style=\"$style_string;\"";
 	}
 
 	public function output() {
-		JS_Banner_Rotate::localize_variables( 'images', $this->images );
+		$outer_style = $this->height_and_width( false );
+		$top_style = $this->height_and_width( false, array( 'background-image:url(' . $this->images[0] . ')' ) );
+		$bottom_style = $this->height_and_width( true );
 
-		echo $this->header();
+		$output = "";
 
-		echo $this->footer();
+		$output .= '<div id="banner-block" style="max-height: ' . $this->height . 'px;height:auto !important;height: ' . $this->height .'px;width:auto !important;width:' . $this->width . 'px;">';
+		$output .= '<div class="banner-container" ' . $outer_style . '>';
+		if($this->titlevis) {
+			$output .= '<div class="banner-top-links">';
+			$output .= '<div class="image-frame" style="background: transparent url(' . JSB_DIRECTORY . 'images/banner-top-links.png) no-repeat scroll 0 0;">';
+			$output .= '<ul>';
+			$output .= '<li class="images-link">' . $this->title . '</li>';
+			$output .= '</ul>';
+			$output .= '</div>';
+			$output .= '</div>';
+		}
+
+		$output = "";
+		$output .= '<div id="rotating-images" ' . $top_style . '>';
+		$output .= '<div class="home-banner top-layer" ' . $top_style . '>';
+		$output .= '</div>';
+		$output .= '<div class="home-banner bottom-layer" ' . $bottom_style . '>';
+		$output .= '</div><!-- /jsBanners -->';
+		$output .= '</div>';
+
+		$output .= "</div><!-- /banner-container -->";
+		$output .= "</div><!-- /banner-block -->";
+
+		echo $output;
+
+		wp_localize_script( 'jsb-rotate', 'images', $this->images );
+		wp_localize_script(
+			'jsb-rotate',
+			'jsb_options',
+			array(
+			     'display' => $this->imgdisp,
+			     'fade'    => $this->imgfade
+	             )
+		);
 	}
 }
 ?>

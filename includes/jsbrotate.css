@@ -95,3 +95,12 @@
 	height:100%;
 	width:100%;
 }
+
+#rotating-images .top-layer,
+#rotating-images .bottom-layer {
+
+}
+
+#rotating-images .top-layer {
+	z-index: 10;
+}
