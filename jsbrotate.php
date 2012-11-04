@@ -28,13 +28,6 @@
  */
 
 /* Define plugin variables */
-if ( ! defined('JSB_ROTATE_INC_URL') )
-	define( 'JSB_ROTATE_INC_URL', WP_PLUGIN_URL . '/js-banner-rotate/includes' );
-if ( ! defined('JSB_ROTATE_IMG_URL') )
-	define( 'JSB_ROTATE_IMG_URL', WP_PLUGIN_URL . '/js-banner-rotate/images' );
-if ( ! defined('JSB_ROTATE_LIB_URL') )
-	define( 'JSB_ROTATE_LIB_URL', WP_PLUGIN_URL . '/js-banner-rotate/lib' );
-
 define( 'JSB_DIRECTORY',     plugin_dir_url( __FILE__ ) );
 define( 'JSB_INC_DIRECTORY', dirname( __FILE__) . '/' );
 
@@ -67,7 +60,9 @@ function jsbrotate( $options ) {
 	JS_Banner_Rotate::jsbrotate( $options );
 }
 
+// Wireup actions
 add_action( 'wp_enqueue_scripts',   array( 'JS_Banner_Rotate', 'enqueue_scripts' ) );
 
+// Wireup shortcodes
 add_shortcode( 'jsbrotate',         array( 'JS_Banner_Rotate', 'shortcode_handler' ) );
 ?>

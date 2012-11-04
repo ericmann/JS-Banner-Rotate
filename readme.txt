@@ -28,16 +28,47 @@ e.g.
 
 = Accepted Arguments =
 
-The shortcode/template tag accepts several parameters:
+The shortcode/template tag accepts several parameters ...
 
-* As many image URLs as you want: [jsbrotate images=http://blog.url/image1.jpg|http://blog.url/image2.jpg /]
-* Slideshow link: [jsbrotate link=http://whateveryouwant.com /]
-* Image height and width: [jsbrotate height=200 width=900 /]
-* Image display and fade time: [jsbrotate imgdisp=8 imgfade=4 /]
+**Images**
 
-The default height and width is whatever is set for "large" images in the WordPress Media administration section (usually 1024x1024).  You must override these in the shortcode if you want to specify different values.
+Specify your images in a pipe-delimited list:
 
-You can toggle the title display - the title defaults to "Home."
+`
+images=http://blog.url/image1.jpg|http://blog.url/image2.jpg
+`
+
+**Banner Link**
+
+Link your entire banner to a specific page on the site or to an external URL:
+
+`
+link=http://whateveryouwant.com
+`
+
+**Banner Title**
+
+Give your banner a title so people know what it's about:
+
+`
+titlevis=true title=Portfolio
+`
+
+**Height and Width**
+
+Specify the dimensions of your banner.  All images not already at these proportions will be stretched/scaled to fix:
+
+`
+height=500 width=230
+`
+
+**Display and Fade Duration**
+
+Manage the length of time each image is displayed on the screen and the length of time it takes to fade between them:
+
+`
+imgdisp=8 imgfade=3
+`
 
 == Frequently Asked Questions ==
 
@@ -48,8 +79,6 @@ To pass multiple parameters (height, fadetime, images, etc), separate them with 
 = How many images can I rotate? =
 
 You can have as few as 1 image (which is a bit boring) and as many as you want in the rotation.
-
-Previous versions of the plug-in have limited you to just 5 images ...
 
 Just make sure your list of images is pipe-delimited (use the | key to separate the URLs).
 
@@ -97,6 +126,18 @@ No. You must use the template tag after `wp_head()` and before `wp_footer()` for
 Check to make sure you have the `wp_head()` template tag in your header and the wp_footer tag in your footer.  If you're missing either of these tags, the scripts won't work.  If you're using the template tag, make sure you've placed it after `wp_head()` and before `wp_footer()`.
 
 *You can only have one rotating banner on any given page.  If you're using the banner in your posts, only the first post on the page will rotate!*
+
+= I think I found a bug! / I want to request a change! =
+
+If you thing you've found something going wrong with the plugin, or if there's a feature you'd like added or changed, please create a new issue on GitHub: https://github.com/ericmann/JS-Banner-Rotate/issues
+
+= Where can I go for more support? =
+
+This plugin is offered without any warranty or express user support.
+
+If you've found a bug, please report it on GitHub (https://github.com/ericmann/JS-Banner-Rotate/issues).
+
+If you can't figure out how to do something please feel free to ask around in the community support forums (http://wordpress.org/support/plugin/js-banner-rotate).
 
 == Screenshots ==
 
