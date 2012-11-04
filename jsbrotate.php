@@ -35,8 +35,8 @@ if ( ! defined('JSB_ROTATE_IMG_URL') )
 if ( ! defined('JSB_ROTATE_LIB_URL') )
 	define( 'JSB_ROTATE_LIB_URL', WP_PLUGIN_URL . '/js-banner-rotate/lib' );
 
-if ( ! defined( 'JSB_DIRECTORY' ) )
-	define( 'JSB_DIRECTORY', plugin_dir_url( __FILE__ ) );
+define( 'JSB_DIRECTORY',     plugin_dir_url( __FILE__ ) );
+define( 'JSB_INC_DIRECTORY', dirname( __FILE__) . '/' );
 
 /* Check to see if this is a new installation or an upgrade */
 delete_option( 'jsb_version' );

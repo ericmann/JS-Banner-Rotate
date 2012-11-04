@@ -112,57 +112,48 @@ class JSB_Banner {
 		}
 	}
 
-	private function height_and_width( $move_to_top = false, $extras = array() ) {
-		$styles = [];
-
-		$styles[] = "height:{$this->height}px";
-		$styles[] = "width:{$this->width}px";
-		$styles[] = "overflow:hidden";
-
-
-		if ( $move_to_top ) {
-			$styles[] = "position:relative";
-			$styles[] = "top:-{$this->height}px";
-		}
-
-		$styles = array_merge( $styles, $extras );
-
-		$style_string = implode( ";", $styles );
-
-		return "style=\"$style_string;\"";
-	}
-
+	/**
+	 * Retrieve the shortcode template either from the theme or from the default template included with the plugin.
+	 *
+	 * To override the default template, merely place a file called `template.jsbrotate_shortcode.php` in the active theme. You
+	 * can use the existing template file in the plugin as an example and can reposition elements or add/remove markup
+	 * where needed.
+	 *
+	 * @uses apply_filters() Calls `jsbrotate_shortcode` to retrieve the shortcode template filename.
+	 * @uses apply_filters() Calls `jsbrotate_shortcode_container` to filter arguments passed to the shortcode template.
+	 *
+	 * @return string HTML markup of the parsed shortcode.
+	 */
 	public function output() {
-		$outer_style = $this->height_and_width( false );
-		$top_style = $this->height_and_width( false, array( 'background-image:url(' . $this->images[0] . ')' ) );
-		$bottom_style = $this->height_and_width( true );
-
-		$output = "";
-
-		$output .= '<div id="banner-block" style="max-height: ' . $this->height . 'px;height:auto !important;height: ' . $this->height .'px;width:auto !important;width:' . $this->width . 'px;">';
-		$output .= '<div class="banner-container" ' . $outer_style . '>';
-		if($this->titlevis) {
-			$output .= '<div class="banner-top-links">';
-			$output .= '<div class="image-frame" style="background: transparent url(' . JSB_DIRECTORY . 'images/banner-top-links.png) no-repeat scroll 0 0;">';
-			$output .= '<ul>';
-			$output .= '<li class="images-link">' . $this->title . '</li>';
-			$output .= '</ul>';
-			$output .= '</div>';
-			$output .= '</div>';
+		// Get the shortcode template
+		$template_name = apply_filters( 'jsbrotate_shortcode', 'template.jsbrotate_shortcode.php' );
+		$path = locate_template( $template_name );
+		if ( empty( $path ) ) {
+			$path = JSB_INC_DIRECTORY . 'lib/' . $template_name;
 		}
 
-		$output = "";
-		$output .= '<div id="rotating-images" ' . $top_style . '>';
-		$output .= '<div class="home-banner top-layer" ' . $top_style . '>';
-		$output .= '</div>';
-		$output .= '<div class="home-banner bottom-layer" ' . $bottom_style . '>';
-		$output .= '</div><!-- /jsBanners -->';
-		$output .= '</div>';
+		// Populate a global container variable
+		global $jsbrotate_container;
+		$jsbrotate_container = array(
+			'title'    => $this->title,
+			'titlevis' => $this->titlevis,
+			'height'   => $this->height,
+			'width'    => $this->width,
+			'image'    => $this->images[0]
+		);
+		$jsbrotate_container = apply_filters( 'jsbrotate_shortcode_container', $jsbrotate_container );
 
-		$output .= "</div><!-- /banner-container -->";
-		$output .= "</div><!-- /banner-block -->";
+		// Start a buffer to capture the HTML output of the shortcode
+		ob_start();
 
-		echo $output;
+		include( $path );
+
+		$output = ob_get_contents();
+
+		ob_end_clean();
+
+		// Because globals are evil, kill it.
+		unset( $jsbrotate_container );
 
 		wp_localize_script( 'jsb-rotate', 'images', $this->images );
 		wp_localize_script(
@@ -173,6 +164,8 @@ class JSB_Banner {
 			     'fade'    => $this->imgfade
 	             )
 		);
+
+		return $output;
 	}
 }
 ?>

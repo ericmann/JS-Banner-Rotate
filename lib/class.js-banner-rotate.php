@@ -1,11 +1,48 @@
 <?php
+/**
+ * Primary plugin functionality, wrapped in a class definition to provide namespace-like abstraction.
+ *
+ * @author Eric Mann
+ *
+ * @since 1.4
+ */
 class JS_Banner_Rotate {
+	/**
+	 * Enqueue the necessary scripts and styles needed to create the rotating image banner.
+	 *
+	 * @since 1.4
+	 */
 	public static function enqueue_scripts() {
 		wp_enqueue_script( 'jsb-rotate', JSB_ROTATE_INC_URL . '/jsbrotate.js', 'jquery', '2.0', true );
 
 		wp_enqueue_style( 'jsb-rotate', JSB_ROTATE_INC_URL . '/jsbrotate.css', '', '2.0', 'screen' );
 	}
 
+	/**
+	 * Handle the user-entered in-page shortcode.
+	 *
+	 * Expected attributes (space-delimited string):
+	 * - height:   Height of banner in pixels.
+	 * - width:    Width of banner in pixels.
+	 * - title:    Title of banner.
+	 * - link:     Url that will be used when the banner is clicked.
+	 * - titlevis: Flag whether or not the banner title is visible.
+	 * - images:   Pipe-delimited string of image Urls. For example, `images=http://site.com/image1.jpg|http://site.com/image2.jpg
+	 * - image1:   deprecated
+	 * - image2:   deprecated
+	 * - image3:   deprecated
+	 * - image4:   deprecated
+	 * - image5:   deprecated
+	 * - imgdisp:  Number of seconds to display each image.
+	 * - imgfade:  Number of seconds to fade each image
+	 * - color:    deprecated
+	 *
+	 * @since 1.4
+	 *
+	 * @param array $atts Attributes passed in to the shortcode as a string within the WordPress editor.
+	 *
+	 * @return string HTML markup for the shortcode.
+	 */
 	public static function shortcode_handler( $atts ) {
 		$atts = shortcode_atts(
 			array(
@@ -26,13 +63,36 @@ class JS_Banner_Rotate {
 				),
 			$atts);
 
-		self::jsbrotate( null, $atts );
+		return self::generate_banner( $atts );
 	}
 
-	public static function jsbrotate( $options = null, $atts = array() ) {
-		if ( null !== $options ) {
-			parse_str( $options, $atts );
-		}
+	/**
+	 * Handle the template tag.
+	 *
+	 * Expected attributes (space-delimited string):
+	 * - height:   Height of banner in pixels.
+	 * - width:    Width of banner in pixels.
+	 * - link:     Url that will be used when the banner is clicked.
+	 * - images:   Pipe-delimited string of image Urls. For example, `images=http://site.com/image1.jpg|http://site.com/image2.jpg
+	 * - image1:   deprecated
+	 * - image2:   deprecated
+	 * - image3:   deprecated
+	 * - image4:   deprecated
+	 * - image5:   deprecated
+	 * - imgdisp:  Number of seconds to display each image.
+	 * - imgfade:  Number of seconds to fade each image
+	 *
+	 * @since 1.4
+	 *
+	 * @param array $atts Attributes passed in to the shortcode as a string within the WordPress editor.
+	 *
+	 * @return string HTML markup for the shortcode.
+	 */
+	public static function jsbrotate( $options ) {
+		$atts = array();
+
+		parse_str( $options, $atts );
+
 		$defaults = array(
 			'height' => get_option('large_size_h'),
 			'width'  => get_option('large_size_w'),
@@ -50,44 +110,71 @@ class JS_Banner_Rotate {
 
 		$atts = array_merge( $defaults, $atts );
 
+		echo self::generate_banner( $atts );
+	}
+
+	/**
+	 * Create a JSB_Banner object from user-entered arguments that were filtered earlier in the class.
+	 *
+	 * All arguments in the $options array are required and assumed to be pre-populated. This function should only ever
+	 * be called from within the JS_Banner_Rotate class.  The required array elements are:
+	 * - images:   Pipe-delimited list of image uris to rotate through.
+	 * - height:   Height of the banner in pixels.
+	 * - width:    Width of the banner in pixels.
+	 * - link:     Url to use as a clickable link for the entire presentation.
+	 * - imgdisp:  Number of seconds to display each image.
+	 * - imgfade:  Number of seconds to fade each image.
+	 * - titlevis: Flag whether or not the banner title is visible.
+	 * - title:    Title for the banner.
+	 *
+	 * @since 2.0
+	 *
+	 * @see shortcode_handler()
+	 * @see jsbrotate()
+	 *
+	 * @param array $options Array of arguments used to generate the banner.
+	 *
+	 * @return string HTML markup for the banner.
+	 */
+	private static function generate_banner( $options ) {
 		// Backwards compatability, convert the old image# strings into an images array
-		if ( $atts['images'] == 'none' ) {
+		if ( $options['images'] == 'none' ) {
 			__deprecated_argument( __FUNCTION__, '2.0', 'Please upgrade your use of individual image# parameters to the pipe-delimited images list!' );
 
-			$atts['images'] = array();
+			$options['images'] = array();
 
-			if ( $atts['image1'] != 'none' )
-				$atts['images'][] = $atts['image1'];
+			if ( $options['image1'] != 'none' )
+				$options['images'][] = $options['image1'];
 
-			if ( $atts['image2'] != 'none' )
-				$atts['images'][] = $atts['image2'];
+			if ( $options['image2'] != 'none' )
+				$options['images'][] = $options['image2'];
 
-			if ( $atts['image3'] != 'none' )
-				$atts['images'][] = $atts['image3'];
+			if ( $options['image3'] != 'none' )
+				$options['images'][] = $options['image3'];
 
-			if ( $atts['image4'] != 'none' )
-				$atts['images'][] = $atts['image4'];
+			if ( $options['image4'] != 'none' )
+				$options['images'][] = $options['image4'];
 
-			if ( $atts['image5'] != 'none' )
-				$atts['images'][] = $atts['image5'];
+			if ( $options['image5'] != 'none' )
+				$options['images'][] = $options['image5'];
 		} else {
-			$atts['images'] = explode( "|", $atts['images'] );
+			$options['images'] = explode( "|", $options['images'] );
 		}
 
 		$banner = new JSB_Banner(
-			$atts['images'],
+			$options['images'],
 			array(
-			     'height'   => $atts['height'],
-			     'width'    => $atts['width'],
-			     'link'     => $atts['link'],
-			     'imgdisp'  => $atts['imgdisp'],
-			     'imgfade'  => $atts['imgfade'],
+			     'height'   => $options['height'],
+			     'width'    => $options['width'],
+			     'link'     => $options['link'],
+			     'imgdisp'  => $options['imgdisp'],
+			     'imgfade'  => $options['imgfade'],
 			     'numvis'   => false,
-			     'titlevis' => $atts['titlevis'],
-			     'title'    => $atts['title']
+			     'titlevis' => $options['titlevis'],
+			     'title'    => $options['title']
 			) );
 
-		$banner->output();
+		return $banner->output();
 	}
 }
 ?>
