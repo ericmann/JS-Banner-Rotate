@@ -4,7 +4,7 @@ Donate link: http://www.jumping-duck.com/wordpress/
 Tags: javascript, banner, header, image rotate, yui
 Requires at least: 2.8
 Tested up to: 3.5
-Stable tag: 2.0
+Stable tag: 2.0.1
 License: GPLv2+
 
 Create a JavaScript-driven rotating banner image on your WordPress site.
@@ -146,6 +146,9 @@ If you can't figure out how to do something please feel free to ask around in th
 
 
 == Changelog ==
+
+= 2.0.1 =
+* Fix an error where deprecated arguments were flagged with the wrong function.
 
 = 2.0 =
 * Refactor display system to use a pluggable template.

@@ -139,7 +139,7 @@ class JS_Banner_Rotate {
 	private static function generate_banner( $options ) {
 		// Backwards compatability, convert the old image# strings into an images array
 		if ( $options['images'] == 'none' ) {
-			__deprecated_argument( __FUNCTION__, '2.0', 'Please upgrade your use of individual image# parameters to the pipe-delimited images list!' );
+			_deprecated_argument( __FUNCTION__, '2.0', 'Please upgrade your use of individual image# parameters to the pipe-delimited images list!' );
 
 			$options['images'] = array();
 
