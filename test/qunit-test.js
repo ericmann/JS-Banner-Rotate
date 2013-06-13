@@ -63,6 +63,29 @@ test( 'top image replaced by queue', function() {
 	equal( top.style.backgroundImage, 'url(' + images[1] + ')' );
 } );
 
+test( 'images cycle after queue', function() {
+	expect(3);
+	
+	var rotateDiv = document.getElementById( 'rotating-images' ),
+		top = rotateDiv.querySelector( '.top-layer' ),
+		bottom = rotateDiv.querySelector( '.bottom-layer' );
+		
+	top.style.backgroundImage = 'none';
+	bottom.style.backgroundImage = 'none';
+	
+	var rotator = new window.ImageRotator( { images: images } );
+	
+	rotator.fadeImage();
+	equal( top.style.backgroundImage, 'url(' + images[1] + ')' );
+	
+	// Cycle back to beginning
+	rotator.fadeImage();
+	equal( top.style.backgroundImage, 'url(' + images[0] + ')' );
+	
+	rotator.fadeImage();
+	equal( top.style.backgroundImage, 'url(' + images[1] + ')' );
+} );
+
 asyncTest( 'callback invoked after fade', function() {
 	expect( 1 );
 	
