@@ -43,3 +43,35 @@ test( 'top image replaces bottom', function() {
 	// Verify
 	equal( bottom.style.backgroundImage, 'url(http://events.jquery.org/2013/portland/img/logo@2x.png)' );
 } );
+
+test( 'top image replaced by queue', function() {
+	expect(1);
+	
+	var rotateDiv = document.getElementById( 'rotating-images' ),
+		top = rotateDiv.querySelector( '.top-layer' ),
+		bottom = rotateDiv.querySelector( '.bottom-layer' );
+		
+	top.style.backgroundImage = 'none';
+	bottom.style.backgroundImage = 'none';
+	
+	var rotator = new window.ImageRotator( { images: images } );
+	
+	// Act
+	rotator.fadeImage();
+	
+	// Verify
+	equal( top.style.backgroundImage, 'url(' + images[1] + ')' );
+} );
+
+asyncTest( 'callback invoked after fade', function() {
+	expect( 1 );
+	
+	// Set up
+	var rotator = new window.ImageRotator( { fade: 0.1, images: images } );
+	
+	// Act
+	rotator.fadeImage( function() {
+		ok( true, 'callback was invoked' );
+		start();
+	} );
+} );
