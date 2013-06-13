@@ -1,82 +1,74 @@
-/**
- * Object that controls the image rotation.
- *
- * @param options Array of options, including the fade duration, interval timeout, and images to rotate through.
- * @constructor
- */
-var ImageRotator = function (options) {
-	var currentImage = 0,
-		fadeDuration = 4,
-		fadeInterval = 8,
-		images = [],
-		self = this;
-
+/*global jQuery */
+( function( window, $, undefined ) {
+	var document = window.document,
+		OPTIONS = window.jsb_options || {};
+	
 	/**
-	 * Attempt to preload images into the browser so large images won't cause a delay when rotated through.
-	 */
-	this.preloadImages = function () {
-		var i,
-			preload_image_obj;
-
-		if (document.images) {
-			for (i = 0; i < images.length; i += 1) {
-				preload_image_obj = new Image();
-				preload_image_obj.src = images[i];
-			}
-		}
-	};
-
-	/**
-	 * Fade the images.
+	 * Object that controls the image rotation.
 	 *
-	 * - Copy the image in the foreground to the background
-	 * - Hide the foreground image
-	 * - Replace the hidden foreground image with the next in the rotation
-	 * - Fade the foreground image back in.
+	 * @param options Array of options, including the fade duration, interval timeout, and images to rotate through.
+	 * @constructor
 	 */
-	this.fadeImage = function () {
-		var imageEl = jQuery('#rotating-images'),
-			top = imageEl.find('.top-layer'),
-			bottom = imageEl.find('.bottom-layer');
+	var ImageRotator = function (options) {
+		var currentImage = 0,
+			fadeDuration = options.fade || 4,
+			fadeInterval = options.display || 8,
+			images = options.images || [],
+			SELF = this;
 
-		currentImage += 1;
+		SELF.preloaded = [];
+			
+		/**
+		 * Attempt to preload images into the browser so large images won't cause a delay when rotated through.
+		 */
+		SELF.preloadImages = function () {
+			for ( var i = 0, l = images.length; i < l; i += 1 ) {
+				var preload_image_obj = new Image();
+				preload_image_obj.src = images[ i ];
+				
+				SELF.preloaded.push( preload_image_obj );
+			}
+		};
 
-		if (currentImage >= images.length) {
-			currentImage = 0;
-		}
+		/**
+		 * Fade the images.
+		 *
+		 * - Copy the image in the foreground to the background
+		 * - Hide the foreground image
+		 * - Replace the hidden foreground image with the next in the rotation
+		 * - Fade the foreground image back in.
+		 */
+		SELF.fadeImage = function () {
+			var imageEl = jQuery( document.getElementById( 'rotating-images' ) ),
+				top = imageEl.find( '.top-layer' ),
+				bottom = imageEl.find( '.bottom-layer' );
 
-		bottom.css('backgroundImage', top.css('backgroundImage'));
-		top.stop().hide();
-		top.css('backgroundImage', 'url(' + images[currentImage] + ')');
-		top.fadeIn(fadeDuration * 1000, function () {
-			setTimeout(self.fadeImage, fadeInterval * 1000);
-		});
+			currentImage += 1;
+
+			if (currentImage >= images.length) {
+				currentImage = 0;
+			}
+
+			bottom.css( 'backgroundImage', top.css( 'backgroundImage' ) );
+			top.stop().hide();
+			top.css( 'backgroundImage', 'url(' + images[currentImage] + ')' );
+			top.fadeIn( fadeDuration * 1000, function () {
+				setTimeout( SELF.fadeImage, fadeInterval * 1000 );
+			} );
+		};
 	};
 
-	if ('undefined' !== typeof options.images) {
-		images = options.images;
-	}
 
-	if ('undefined' !== typeof options.display) {
-		self.fadeInterval = options.display;
-	}
-
-	if ('undefined' !== typeof options.fade) {
-		fadeDuration = options.fade;
-	}
-};
-
-
-jQuery(document).ready(function () {
 	var options = {
 		images: window.images,
-		display: window.jsb_options.display,
-		fade: window.jsb_options.fade
-	},
-		rotator = new ImageRotator(options);
+		display: OPTIONS.display,
+		fade: OPTIONS.fade
+	};
+	
+	var rotator = new ImageRotator( options );
 
 	// The first image in the rotation will always be loaded. Attempt to load the others so the queue moves quickly.
 	rotator.preloadImages();
 
-	setTimeout(rotator.fadeImage, window.jsb_options.display * 1000);
-});
+	setTimeout( rotator.fadeImage, OPTIONS.display * 1000 );
+} )( this, jQuery );
