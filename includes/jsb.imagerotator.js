@@ -17,6 +17,8 @@
 			SELF = this;
 
 		SELF.preloaded = [];
+		
+		SELF.fadeInterval = fadeInterval;
 			
 		/**
 		 * Attempt to preload images into the browser so large images won't cause a delay when rotated through.
@@ -38,7 +40,7 @@
 		 * - Replace the hidden foreground image with the next in the rotation
 		 * - Fade the foreground image back in.
 		 */
-		SELF.fadeImage = function () {
+		SELF.fadeImage = function ( callback ) {
 			var imageEl = jQuery( document.getElementById( 'rotating-images' ) ),
 				top = imageEl.find( '.top-layer' ),
 				bottom = imageEl.find( '.bottom-layer' );
@@ -53,7 +55,9 @@
 			top.stop().hide();
 			top.css( 'backgroundImage', 'url(' + images[currentImage] + ')' );
 			top.fadeIn( fadeDuration * 1000, function () {
-				setTimeout( SELF.fadeImage, fadeInterval * 1000 );
+				if ( undefined !== callback ) {
+					callback();
+				}
 			} );
 		};
 	};
